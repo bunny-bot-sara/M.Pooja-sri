@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduBot - AI Learning Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f7fb;color:#172033;line-height:1.6}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;padding:18px 6%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.logo{font-size:25px;font-weight:800}.logo span{font-size:28px}
+nav a{color:white;text-decoration:none;margin-left:22px;font-weight:600;cursor:pointer}
+.page{display:none;min-height:calc(100vh - 75px);padding:55px 7%}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#eef2ff,#faf5ff);padding:80px 8%;border-radius:0 0 35px 35px;text-align:center}
+.hero h1{font-size:48px;color:#312e81;margin-bottom:15px}.hero p{max-width:720px;margin:auto;font-size:19px;color:#4b5563}
+.btn{display:inline-block;border:0;background:#4f46e5;color:white;padding:13px 24px;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;margin:10px 5px}
+.btn.secondary{background:#e5e7eb;color:#1f2937}
+.section-title{text-align:center;margin-bottom:35px}.section-title h2{font-size:34px;color:#312e81}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px}
+.card{background:white;padding:25px;border-radius:16px;box-shadow:0 5px 18px #0000000d;border:1px solid #e5e7eb}
+.card h3{color:#3730a3;margin:10px 0}.icon{font-size:35px}
+.chatbox{max-width:850px;margin:auto;background:white;border-radius:18px;box-shadow:0 8px 30px #00000012;overflow:hidden}
+.chat-head{background:#4f46e5;color:white;padding:20px}.messages{height:390px;overflow-y:auto;padding:20px;background:#f8fafc}
+.msg{max-width:78%;padding:12px 15px;border-radius:14px;margin:10px 0;white-space:pre-wrap}
+.bot{background:#e0e7ff}.user{background:#4f46e5;color:white;margin-left:auto}
+.chat-input{display:flex;gap:10px;padding:15px;border-top:1px solid #ddd}.chat-input input{flex:1;padding:13px;border:1px solid #ccc;border-radius:10px;font-size:16px}
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.subject{cursor:pointer;text-align:center;transition:.2s}.subject:hover{transform:translateY(-3px)}
+.tip{margin:15px 0;padding:18px;background:white;border-left:5px solid #4f46e5;border-radius:10px}
+form{max-width:650px;margin:auto;background:white;padding:30px;border-radius:16px;box-shadow:0 5px 20px #00000010}
+input,textarea,select{width:100%;padding:12px;margin:8px 0 18px;border:1px solid #d1d5db;border-radius:9px;font-size:15px}textarea{height:130px;resize:vertical}
+footer{text-align:center;background:#111827;color:white;padding:25px}
+@media(max-width:650px){nav{display:none}.hero h1{font-size:36px}.page{padding:35px 5%}}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🤖 EduBot</div>
+<nav>
+<a onclick="showPage('home')">Home</a>
+<a onclick="showPage('ask')">Ask EduBot</a>
+<a onclick="showPage('subjects')">Subjects</a>
+<a onclick="showPage('learning')">Learning</a>
+<a onclick="showPage('about')">About</a>
+<a onclick="showPage('feedback')">Feedback</a>
+</nav>
+</header>
+
+<section id="home" class="page active">
+<div class="hero">
+<h1>Ask Anything. Learn Everything.</h1>
+<p>No doubt is too difficult. No question is too silly. EduBot helps students understand difficult topics through simple explanations.</p>
+<button class="btn" onclick="showPage('ask')">🤖 Ask EduBot</button>
+<button class="btn secondary" onclick="showPage('subjects')">📚 Explore Subjects</button>
+</div>
+<br><br>
+<div class="section-title"><h2>Why Choose EduBot?</h2></div>
+<div class="cards">
+<div class="card"><div class="icon">⚡</div><h3>Instant Doubt Solving</h3><p>Ask questions and get helpful answers instantly.</p></div>
+<div class="card"><div class="icon">💡</div><h3>Simple Explanations</h3><p>Complex concepts are explained in student-friendly language.</p></div>
+<div class="card"><div class="icon">📚</div><h3>Multiple Subjects</h3><p>Learn Mathematics, Science, Programming, DBMS and more.</p></div>
+<div class="card"><div class="icon">🕐</div><h3>24/7 Learning</h3><p>Learn at your own pace whenever you need help.</p></div>
+</div>
+</section>
+
+<section id="ask" class="page">
+<div class="section-title"><h2>🤖 Ask EduBot</h2><p>Ask a question from any supported subject.</p></div>
+<div class="chatbox">
+<div class="chat-head"><b>EduBot Assistant</b><br><small>Student-friendly doubt solver</small></div>
+<div id="messages" class="messages"><div class="msg bot">Hi! 👋 I'm EduBot.<br>Ask me a question like:<br>• What is DBMS?<br>• What is an algorithm?<br>• Explain Ohm's law.<br>• What is binary?</div></div>
+<div class="chat-input">
+<input id="question" placeholder="Type your doubt here..." onkeydown="if(event.key==='Enter')askBot()">
+<button class="btn" onclick="askBot()">Send</button>
+</div>
+</div>
+</section>
+
+<section id="subjects" class="page">
+<div class="section-title"><h2>📚 Explore Subjects</h2><p>Choose a subject and start learning.</p></div>
+<div class="subject-grid">
+<div class="card subject" onclick="askSubject('Mathematics')">➗<h3>Mathematics</h3><p>Algebra, Geometry, Calculus</p></div>
+<div class="card subject" onclick="askSubject('Physics')">⚛️<h3>Physics</h3><p>Motion, Energy, Thermodynamics</p></div>
+<div class="card subject" onclick="askSubject('Chemistry')">🧪<h3>Chemistry</h3><p>Atoms, Reactions, Periodic Table</p></div>
+<div class="card subject" onclick="askSubject('Computer Science')">💻<h3>Computer Science</h3><p>Algorithms and Data Structures</p></div>
+<div class="card subject" onclick="askSubject('Programming')">👨‍💻<h3>Programming</h3><p>Languages, Coding and Debugging</p></div>
+<div class="card subject" onclick="askSubject('DBMS')">🗄️<h3>DBMS</h3><p>Databases, SQL and Queries</p></div>
+<div class="card subject" onclick="askSubject('Electronics')">🔌<h3>Electronics</h3><p>Circuits and Devices</p></div>
+<div class="card subject" onclick="askSubject('English')">📝<h3>English</h3><p>Grammar and Communication</p></div>
+<div class="card subject" onclick="askSubject('General Knowledge')">🌍<h3>General Knowledge</h3><p>History, Geography and Culture</p></div>
+</div>
+</section>
+
+<section id="learning" class="page">
+<div class="section-title"><h2>📖 Learning & Study Tips</h2><p>Small habits can make learning easier.</p></div>
+<div class="tip"><b>📌 Active Reading:</b> Take notes while reading.</div>
+<div class="tip"><b>🔁 Spaced Repetition:</b> Review important topics at intervals.</div>
+<div class="tip"><b>👩‍🏫 Teach Others:</b> Explain a topic to someone else to strengthen understanding.</div>
+<div class="tip"><b>✍️ Practice Problems:</b> Apply concepts instead of only reading them.</div>
+<div class="tip"><b>⏰ Time Management:</b> Study in focused 25-minute blocks and take regular breaks.</div>
+<div class="tip"><b>🎯 Exam Preparation:</b> Review previous papers, formulas and mock tests.</div>
+</section>
+
+<section id="about" class="page">
+<div class="section-title"><h2>ℹ️ About EduBot</h2></div>
+<div class="card">
+<p>EduBot is an AI-inspired educational assistant designed to help students learn in a comfortable, judgment-free environment.</p><br>
+<h3>Our Vision</h3><p>To make learning simple, accessible and comfortable for every student.</p><br>
+<h3>Our Mission</h3><p>Help students ask questions freely and understand concepts through clear explanations.</p><br>
+<h3>Key Features</h3>
+<ul><li>Student-friendly doubt solving</li><li>Multiple subjects</li><li>Simple explanations</li><li>Learning and exam tips</li><li>Feedback support</li></ul>
+</div>
+</section>
+
+<section id="feedback" class="page">
+<div class="section-title"><h2>💬 Send Feedback</h2><p>Help us improve EduBot.</p></div>
+<form onsubmit="sendFeedback(event)">
+<label>Name</label><input id="fname" required>
+<label>Email</label><input type="email" id="email" required>
+<label>Feedback Type</label>
+<select id="ftype"><option>Suggestion</option><option>Feature Request</option><option>Bug Report</option><option>Experience & Feedback</option></select>
+<label>Your Message</label><textarea id="fmessage" required></textarea>
+<button class="btn" type="submit">Send Feedback</button>
+<p id="feedbackResult"></p>
+</form>
+</section>
+
+<footer>© 2026 EduBot — AI-Inspired Learning Assistant | Made for students, by developers</footer>
+
+<script>
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+const answers={
+"dbms":"DBMS stands for Database Management System. It is software used to create, store, organize, retrieve and manage data in databases. Examples include Oracle, MySQL and PostgreSQL.",
+"algorithm":"An algorithm is a step-by-step procedure used to solve a problem or perform a task. Example: steps for finding the largest number in a list.",
+"binary":"Binary is a number system that uses only two digits: 0 and 1. Computers use binary to represent and process digital information.",
+"ohm":"Ohm's Law states that V = I × R, where V is voltage, I is current and R is resistance.",
+"html":"HTML stands for HyperText Markup Language. It is used to structure content on web pages.",
+"css":"CSS stands for Cascading Style Sheets. It is used to control the appearance, layout and design of web pages.",
+"javascript":"JavaScript is a programming language used to make web pages interactive and dynamic.",
+"react":"React is a JavaScript library used to build user interfaces using reusable components.",
+"sql":"SQL stands for Structured Query Language. It is used to create, retrieve, update and manage data in relational databases.",
+"python":"Python is a high-level programming language known for its simple syntax. It is widely used in web development, automation, data science and AI.",
+"newton":"Newton's second law states F = m × a, where F is force, m is mass and a is acceleration."
+};
+function getAnswer(q){
+ let s=q.toLowerCase().trim();
+ for(let key in answers) if(s.includes(key)) return answers[key];
+ if(s.includes("hello")||s.includes("hi")) return "Hello! 👋 Ask me any educational doubt.";
+ if(s.includes("thank")) return "You're welcome! 😊 Keep learning.";
+ if(s.includes("who are you")||s.includes("what is edubot")) return "I'm EduBot, a student-friendly educational assistant created to make learning simpler.";
+ return "I understand your question, but this demo currently has answers for selected topics such as DBMS, algorithms, binary, Ohm's Law, HTML, CSS, JavaScript, React, SQL, Python and Newton's law. You can add more answers to the JavaScript answer database.";
+}
+function askBot(){
+ let input=document.getElementById('question'), q=input.value.trim(); if(!q)return;
+ addMsg(q,'user'); input.value='';
+ setTimeout(()=>addMsg(getAnswer(q),'bot'),350);
+}
+function addMsg(text,type){
+ let box=document.getElementById('messages'), d=document.createElement('div');
+ d.className='msg '+type; d.textContent=text; box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+function askSubject(subject){
+ showPage('ask'); document.getElementById('question').value="Explain "+subject+" in simple words";
+ document.getElementById('question').focus();
+}
+function sendFeedback(e){
+ e.preventDefault();
+ document.getElementById('feedbackResult').textContent="✅ Thank you! Your feedback has been saved for this demo.";
+ e.target.reset();
+}
+</script>
+</body>
+</html>
